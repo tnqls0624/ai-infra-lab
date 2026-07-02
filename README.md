@@ -1,28 +1,34 @@
 # ai-infra-lab
 
-백엔드 개발자 → **AI Infrastructure / MLOps 엔지니어** 전환을 위한 단계적 실습 저장소.
-하나의 repo를 단계적으로 키우며 다음 파이프라인을 직접 만든다:
+백엔드 개발자 → **AI 인프라 엔지니어** 전환을 위한 단계적 실습 저장소.
+GPU 서버 위에서 모델이 학습·서빙되는 전체 스택을 기초부터 직접 다루는 것이 목표다.
 
-> **PyTorch 모델 학습 → 저장 → FastAPI 추론 API → Docker → Kubernetes(GPU) → vLLM 서빙 → 사내 LLM 플랫폼**
+> **📍 학습 순서 정본은 [`ROADMAP.md`](ROADMAP.md) — 7블록, 19주+버퍼. 학습 우선.**
+> Block 0 파이썬/PyTorch 기초 → 1 컨테이너&GPU → 2 GPU/CUDA → 3 서버·OS·네트워크 → 4 K8s+GPU → 5 서빙&학습 → 6 관측성&운영
+> 블랙웰 특화 내용·서버 브링업 체크리스트는 ROADMAP 부록 A/B (참고용).
 
-K8s/GPU/분산학습/vLLM은 블록2(13~24주)에서 합류. 지금은 **블록1: Python/ML → PyTorch → FastAPI → Docker**.
+**현재**: Block 0 (파이썬 + PyTorch 감잡기). GPU가 필요한 Block 2부터는 클라우드 GPU 실습 환경(Block 1 게이트)이 전제.
 
 ## 디렉토리 구조
 
-| 디렉토리 | 용도 |
-|---|---|
-| `training/` | PyTorch 학습 코드 |
-| `serving/` | FastAPI 추론 API |
-| `gateway/` | NestJS API Gateway (블록2) |
-| `docker/` | Dockerfile |
-| `kubernetes/` | K8s 매니페스트 (블록2) |
-| `mlflow/` | 실험 관리 (블록2) |
-| `workflows/` | Argo Workflows (블록2) |
-| `monitoring/` | Prometheus/Grafana (블록2) |
-| `terraform/` | EKS IaC (블록2) |
-| `notebooks/` | 실험 노트북 |
-| `models/` | 모델 산출물 (`.gitignore`, git 추적 안 함) |
-| `docs/` | 학습 로그(`log.md`) 등 |
+각 디렉토리는 [`ROADMAP.md`](ROADMAP.md)의 블록과 매핑된다. 착수한 디렉토리에는 블록별 `README.md` 스텁이 있다.
+
+| 디렉토리 | 용도 | 블록 |
+|---|---|---|
+| `python/` | 파이썬 기초 실습 (`train_mnist.py`) | Block 0 |
+| `docker/` | Dockerfile · GPU 컨테이너 | Block 1 |
+| `docs/notes/` | **채점용 학습 노트** (명령 출력 포함 커밋) — gpu-access-decision, block2/3 노트 | Block 1~3 |
+| `training/` | DDP 토이 학습 + 체크포인트 재개 | Block 5B |
+| `serving/` | vLLM 서빙 + 벤치마크 (TRT-LLM은 프리빌트만) | Block 5A |
+| `gateway/` | 서빙 인증/게이트웨이 (vLLM은 기본 무인증) | Block 5A |
+| `mlflow/` | 실험 추적 (1런) | Block 5B |
+| `kubernetes/` | K8s 매니페스트 · GPU Operator | Block 4 |
+| `monitoring/` | DCGM · Prometheus/Grafana · 장애 플레이북 | Block 6 |
+| `terraform/` | 인프라 코드화 (선택 — 컷 1순위) | Block 6 |
+| `notebooks/` | 실험 노트북 | 공용 |
+| `workflows/` | 워크플로우 오케스트레이션 (후순위) | 확장 |
+| `models/` | 모델 산출물 (`.gitignore`, git 추적 안 함 — 백업 정책은 Block 6) | — |
+| `docs/` | 학습 로그(`log.md`) · ops 핸드북 캡스톤 | — |
 
 ---
 
