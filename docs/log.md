@@ -11,3 +11,10 @@
 - **발생한 문제**: 특이사항 없음(설치 정상). `.venv/`가 git에 올라갈 뻔함
 - **해결하거나 확인한 내용**: `import torch` 무오류, `torch.cuda.is_available()` = **False** (GPU 없는 CPU 환경이라 정상 — 블록2에서 EKS GPU 노드 붙이면 True로 바뀔 예정). `.gitignore`에 `.venv/`·`__pycache__/`·`*.pyc` 추가해 가상환경·캐시가 추적되지 않도록 처리(요구사항은 `requirements.txt`만으로 재현)
 - **다음에 할 것**: W1 D4 — 점프투파이썬에서 comprehension·f-string·타입힌트 복습 + 예제 1개
+
+
+## 2026-06-30 (화) — W1 D4
+- **오늘 한 것**: for문을 사용하여 배열안의 int형 숫자를 f-string을 사용하여 print 출력
+- **발생한 문제**: 특이사항 없음
+- **해결하거나 확인한 내용**: 잘출력됨
+- **다음에 할 것**: 너가 정해줘
