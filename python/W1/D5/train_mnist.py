@@ -89,7 +89,6 @@ def load_data(data_dir: Path, batch_size: int) -> tuple[DataLoader, DataLoader]:
     확인: 구현 후 실행하면 data/ 밑에 파일이 내려오고, 다음 TODO(S3) 메시지가 떠야 한다.
     """
 
-    # tf = transforms.
     raise NotImplementedError("S2: load_data()를 구현하세요 (docstring 힌트 참고)")
 
 
