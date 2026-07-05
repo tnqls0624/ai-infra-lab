@@ -161,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
     setup_logging(args.verbose)
     logger.info("hyperparams: epochs=%d batch_size=%d lr=%g",
                 args.epochs, args.batch_size, args.lr)
-    device = pick_device()
+    device = pick_device();
 
     try:
         train_loader, _test_loader = load_data(args.data_dir, args.batch_size)
@@ -177,7 +177,8 @@ def main(argv: list[str] | None = None) -> int:
 
         args.model_out.parent.mkdir(parents=True, exist_ok=True);
         torch.save(model.state_dict(), args.model_out);
-        m2 = SimpleNet(); m2.load_state_dict(torch.load(args.model_out));
+        m2 = SimpleNet(); 
+        m2.load_state_dict(torch.load(args.model_out));
 
         # logger.info("완료: 모델 저장은 S5에서 구현")
 
