@@ -109,18 +109,18 @@ class SimpleNet(nn.Module):
     """
 
     def __init__(self) -> None:
-        super().__init__(
-            nn.Sequential(
-                nn.Flatten(),
-                nn.Linear(784, 128),
-                nn.ReLU(),
-                nn.Linear(128, 10)
-            )
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(784, 128),
+            nn.ReLU(),
+            nn.Linear(128,10)
         )
-        
+        # raise NotImplementedError("S3: SimpleNet 레이어를 정의하세요")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        raise NotImplementedError("S3: forward를 구현하세요")
+        return self.net(x);
+        # raise NotImplementedError("S3: forward를 구현하세요")
 
 
 # ── S4. TODO(나): 학습 루프 ─────────────────────────────────────────────────
