@@ -20,3 +20,11 @@
 - **발생한 문제**: 특이사항 없음
 - **해결하거나 확인한 내용**: 잘출력됨
 - **다음에 할 것**: `ROADMAP.md` 확정(학습 우선) → **Block 0 계속**: `python/train_mnist.py` 뼈대 시작 — argparse/logging/타입힌트로 CLI 구조 잡고 데이터 로드까지 (W2 말 강제 종료 규칙 있음)
+
+## 2026-07-05 (일) — W1 D5
+
+- 오늘 한 것: S2~S5 구현 완료, --epochs 1 실행 검증, batch 64 vs 256 시간/loss 비교 실험
+  y=ax+b 1차 방정식 및 그래프 공부, 텐서에서는 y = w(가중치)x(데이터) + b(바이어스(기본값))
+- 발생한 문제: load_data가 Dataset을 반환하던 버그 (DataLoader로 안 감싸고 해당 객체 return 안함), tuple() 사용법 혼동
+- 해결하거나 확인한 내용: loader 2개 반환으로 수정. batch 크기가 시간엔 영향 미미(총 연산 동일), loss엔 영향 큼(업데이트 938 vs 235회)
+- 다음에 할 것: Block 0 W2 — Linux 기본기(`docker run -it ubuntu`에서 top/권한/systemd 감각) + 수학 병행(정승제 50일 수학 선별: 함수/이차함수/지수로그). Block 0 완료 기준은 달성 상태
