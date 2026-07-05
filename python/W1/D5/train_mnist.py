@@ -174,7 +174,12 @@ def main(argv: list[str] | None = None) -> int:
         #         재로드: m2 = SimpleNet(); m2.load_state_dict(torch.load(args.model_out))
         #   + load_data의 다운로드 실패(네트워크) 같은 예외를 try/except로 구분해
         #     "무엇이 왜 실패했는지" 로그로 남기기 — 인프라 코드의 기본기.
-        logger.info("완료: 모델 저장은 S5에서 구현")
+
+        args.model_out.parent.mkdir(parents=True, exist_ok=True);
+        torch.save(model.state_dict(), args.model_out);
+        m2 = SimpleNet(); m2.load_state_dict(torch.load(args.model_out));
+
+        # logger.info("완료: 모델 저장은 S5에서 구현")
 
     except NotImplementedError as e:
         logger.error("다음 세션 과제 → %s", e)
