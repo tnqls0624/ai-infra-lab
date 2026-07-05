@@ -139,6 +139,8 @@ def train(model: nn.Module, loader: DataLoader, device: torch.device,
               opt.step()                           # ④ 가중치 갱신
           logger.info("epoch %d done, loss=%.4f", epoch, loss.item())  # ⑤ 기록
     """
+    
+    loss_fn = nn.CrossEntropyLoss
     raise NotImplementedError("S4: train() 학습 루프를 구현하세요")
 
 
