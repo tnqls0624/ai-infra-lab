@@ -93,8 +93,8 @@ def load_data(data_dir: Path, batch_size: int) -> tuple[DataLoader, DataLoader]:
     test_ds = datasets.MNIST(root=data_dir, train=False, download=True, transform=tf);
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
-    return train_loader, test_loader
     # raise NotImplementedError("S2: load_data()를 구현하세요 (docstring 힌트 참고)")
+    return train_loader, test_loader
 
 
 # ── S3. TODO(나): 모델 — 28x28 흑백 이미지를 0~9로 분류하는 최소 신경망 ────
