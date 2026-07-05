@@ -88,7 +88,10 @@ def load_data(data_dir: Path, batch_size: int) -> tuple[DataLoader, DataLoader]:
       3) DataLoader(train_ds, batch_size=batch_size, shuffle=True) / test는 shuffle=False
     확인: 구현 후 실행하면 data/ 밑에 파일이 내려오고, 다음 TODO(S3) 메시지가 떠야 한다.
     """
-
+    tf = transforms.ToTensor();
+    train_ds = datasets.MNIST(root=data_dir, train=True, download=True, transform=tf);
+    test_ds = datasets.MNIST(root=data_dir, train=False, download=True, transform=tf);
+    DataLoader(train_ds, batch_size=batch_size, shuffle=True);
     raise NotImplementedError("S2: load_data()를 구현하세요 (docstring 힌트 참고)")
 
 
