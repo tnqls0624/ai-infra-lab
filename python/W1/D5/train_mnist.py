@@ -141,8 +141,17 @@ def train(model: nn.Module, loader: DataLoader, device: torch.device,
           logger.info("epoch %d done, loss=%.4f", epoch, loss.item())  # ⑤ 기록
     """
 
-    loss_fn = nn.CrossEntropyLoss
-    raise NotImplementedError("S4: train() 학습 루프를 구현하세요")
+    loss_fn = nn.CrossEntropyLoss();
+    opt = torch.optim.Adam(model.parameters(), lr=lr);
+    for epoch in range(epochs):
+        for x, y in loader:
+            x, y = x.to(device), y.to(device);
+            opt.zero_grad();
+            loss = loss_fn(model(x), y);
+            loss.backward();
+            opt.step();
+        logger.info("epoch %d done, loss=%.4f", epoch, loss.item());
+    # raise NotImplementedError("S4: train() 학습 루프를 구현하세요")
 
 
 # ── 실행 흐름 (S5에서 저장/로드를 여기에 추가) ──────────────────────────────
