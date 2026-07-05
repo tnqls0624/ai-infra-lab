@@ -91,10 +91,10 @@ def load_data(data_dir: Path, batch_size: int) -> tuple[DataLoader, DataLoader]:
     tf = transforms.ToTensor();
     train_ds = datasets.MNIST(root=data_dir, train=True, download=True, transform=tf);
     test_ds = datasets.MNIST(root=data_dir, train=False, download=True, transform=tf);
-    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True);
+    test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False);
     # raise NotImplementedError("S2: load_data()를 구현하세요 (docstring 힌트 참고)")
-    return train_loader, test_loader
+    return train_loader, test_loader;
 
 
 # ── S3. TODO(나): 모델 — 28x28 흑백 이미지를 0~9로 분류하는 최소 신경망 ────
@@ -151,7 +151,6 @@ def train(model: nn.Module, loader: DataLoader, device: torch.device,
             loss.backward();
             opt.step();
         logger.info("epoch %d done, loss=%.4f", epoch, loss.item());
-    # raise NotImplementedError("S4: train() 학습 루프를 구현하세요")
 
 
 # ── 실행 흐름 (S5에서 저장/로드를 여기에 추가) ──────────────────────────────
