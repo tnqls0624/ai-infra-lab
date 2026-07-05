@@ -183,10 +183,10 @@ def main(argv: list[str] | None = None) -> int:
 
     except NotImplementedError as e:
         logger.error("다음 세션 과제 → %s", e)
-        return 
-    except OSError as e:
+        return 1
+    except (OSError, RuntimeError) as e:
         logger.error("파일/네트워크 I/O 실패: %s", e);
-        return
+        return 1
     return 0
 
 
