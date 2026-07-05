@@ -179,12 +179,14 @@ def main(argv: list[str] | None = None) -> int:
         torch.save(model.state_dict(), args.model_out);
         m2 = SimpleNet(); 
         m2.load_state_dict(torch.load(args.model_out));
-
-        # logger.info("완료: 모델 저장은 S5에서 구현")
+        logger.info("모델 저장/재로드 검증 완료: %s", args.model_out);
 
     except NotImplementedError as e:
         logger.error("다음 세션 과제 → %s", e)
-        return 1
+        return 
+    except OSError as e:
+        logger.error("파일/네트워크 I/O 실패: %s", e);
+        return
     return 0
 
 
