@@ -53,6 +53,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     p = argparse.ArgumentParser(description="MNIST 학습 CLI (Block 0 통합 산출물)")
     p.add_argument("--epochs", type=int, default=1, help="학습 epoch 수")
+    p.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto",
+               help="학습 디바이스 (auto=cuda 가능하면 cuda)")
     p.add_argument("--batch-size", type=int, default=64, help="미니배치 크기")
     p.add_argument("--lr", type=float, default=1e-3, help="learning rate")
     p.add_argument("--data-dir", type=Path, default=Path("data"),
@@ -63,13 +65,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return p.parse_args(argv)
 
 
-def pick_device() -> torch.device:
-    """GPU가 있으면 cuda, 없으면 cpu.
+def pick_device(requested: str) -> torch.device:
+    """요청된 디바이스를 결정한다: auto=가능하면 cuda, cuda 불가 시엔 즉시 실패.
 
-    주의: is_available()=True여도 연산이 죽을 수 있다(휠에 해당 GPU 커널 부재)
-    — Block 2 W2 함정 재현 랩에서 직접 겪어본다.
+    조용한 폴백 금지 — cuda를 요청했는데 없으면 ValueError로 fail-fast.
+    (is_available()=True여도 연산이 죽을 수 있다 — Block 2 함정 재현 랩에서 다룬다.)
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if requested == "auto":
+        requested = "cuda" if torch.cuda.is_available() else "cpu"
+    if requested == "cuda" and not torch.cuda.is_available():
+        raise ValueError("cuda 요청됐지만 이 환경엔 CUDA 없음 (torch 빌드/드라이버 확인)")
+    device = torch.device(requested)
     logger.info("device=%s (cuda available: %s)", device, torch.cuda.is_available())
     return device
 
@@ -161,7 +167,11 @@ def main(argv: list[str] | None = None) -> int:
     setup_logging(args.verbose)
     logger.info("hyperparams: epochs=%d batch_size=%d lr=%g",
                 args.epochs, args.batch_size, args.lr)
-    device = pick_device();
+    try:
+        device = pick_device(args.device)
+    except ValueError as e:
+        logger.error("디바이스 설정 오류: %s", e)
+        return 1
 
     try:
         train_loader, _test_loader = load_data(args.data_dir, args.batch_size)
