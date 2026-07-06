@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/log.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "log"
+              "title": "README"
             }
           }
         ]
@@ -94,7 +94,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/log.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +103,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "log 의 백링크"
+              "title": "백링크"
             }
           },
           {
@@ -113,12 +112,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/log.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "log 의 나가는 링크"
+              "title": "나가는 링크"
             }
           },
           {
@@ -185,6 +183,12 @@
   },
   "active": "6a3a993e2f2135e8",
   "lastOpenFiles": [
+    "docs/log.md",
+    "python/W1/D5/train_mnist.py",
+    "python/W1/D4/practice.py",
+    "python/W1/D5",
+    "python/W1/D4",
+    "python/W1",
     "python/train_mnist.py",
     "docs/notes/block3-server-network.md",
     "docs/notes/block2-gpu-cuda.md",
@@ -202,8 +206,6 @@
     "python/W1D4/practice.py",
     "python/W1D4",
     "python",
-    "requirements.txt",
-    "README.md",
-    "docs/log.md"
+    "README.md"
   ]
 }
