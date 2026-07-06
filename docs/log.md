@@ -31,7 +31,12 @@
 
 ## 2026-07-06 (월) — W2 D3
 
-- 오늘 한 것: lscpu로 core개수 체크, top 로 loadaverige 체크(코어개수가 11이니까 1분, 5분, 15분의 최대 수치가 11까지 증가할수 있음), free -m 으로 사용가능한 메모리 수치 확인, df -h 로 디스크 용량 확인,
+- 오늘 한 것: lscpu로 core개수 체크, top 로 loadaverige 체크(코어개수가 11이니까 1분, 5분, 15분의 최대 수치가 11까지 증가할수 있음), free -m 으로 사용가능한 메모리 수치 확인, df -h 로 디스크 용량 확인, apt update && apt install 커맨드 사용하여 패키지 다운로드, whoami; id, journalctl 사용해보려 했으나 실패, vmstat 1,
+- root@1e001715902c:/# touch /tmp/a; chmod 400 /tmp/a; ls -l /tmp/a
+  -r-------- 1 root root 0 Jul 6 14:23 /tmp/a
+  root@1e001715902c:/# chmod 600 /tmp/a
+  root@1e001715902c:/# ls -l /tmp/a
+  -rw------- 1 root root 0 Jul 6 14:23 /tmp/a
 - 발생한 문제: 없음
-- 해결하거나 확인한 내용: 없음 
+- 해결하거나 확인한 내용: 없음
 - 다음에 할 것: 너가 적어줘
