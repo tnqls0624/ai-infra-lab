@@ -37,6 +37,9 @@
   root@1e001715902c:/# chmod 600 /tmp/a
   root@1e001715902c:/# ls -l /tmp/a
   -rw------- 1 root root 0 Jul 6 14:23 /tmp/a
+  컨테이너는 기본 root + 최소 이미지라 top/htop조차 없다 → apt로 직접 설치
+  journalctl 실패 이유: 컨테이너엔 systemd(init)가 없고 PID 1이 내 셸 → 컨테이너 ≠ 완전한 서버
+  chmod 400 = -r-------- (소유자 읽기만), 600 = -rw------- (읽기+쓰기)
 - 발생한 문제: 없음
 - 해결하거나 확인한 내용: 없음
 - 다음에 할 것: 너가 적어줘
