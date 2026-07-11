@@ -69,7 +69,6 @@
   - `RUN apt install && pip install` 실패 — `apt update` 선행 없음 + 설치할 패키지명 없음 + pip은 아직 설치 전이라 command not found
   - `COPY requirements.txt .` 실패 — COPY는 빌드 컨텍스트 밖의 파일을 절대 못 봄 (컨텍스트가 `docker/`여서 루트의 requirements.txt 접근 불가)
   - `pip install -r requirements.txt --index-url .../whl/cpu` 실패 — pytorch CPU 인덱스에는 torch 계열만 있어서 scikit-learn/jupyterlab을 못 찾음
-  - `CMD "echo start!"` — shell form에서 따옴표 포함 문자열이 통째로 하나의 명령어 이름으로 해석돼 not found
 - 해결하거나 확인한 내용:
   - 빌드 컨텍스트를 리포 루트로 바꾸고 `-f docker/Dockerfile`로 Dockerfile 위치를 분리 지정. `.dockerignore`(.venv 991MB, data 63MB 등 제외)로 transferring context 약 1GB → 136B
   - 컨테이너에는 torch/torchvision CPU wheel만 직접 설치 — 로컬 개발 의존성(jupyterlab 등)과 컨테이너 실행 의존성은 다르다. 이미지에는 실행에 필요한 최소만
