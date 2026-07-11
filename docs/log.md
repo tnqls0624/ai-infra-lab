@@ -64,7 +64,17 @@
 
 ## 2026-07-11 (토) — W2 D5
 
-오늘 한 것:
-발생한 문제:
-해결하거나 확인한 내용:
-다음에 할 것:
+- 오늘 한 것: CUDA 베이스(`nvidia/cuda:12.4.1-runtime-ubuntu22.04`) Dockerfile 작성 → `docker build`/`docker run` 통과, 컨테이너 안에서 CPU 학습 1 epoch 완주(loss=0.0898, 모델 저장/재로드 검증까지). `.dockerignore` 추가. 소스 1줄 변경 후 재빌드로 레이어 캐시 무효화 실측.
+- 발생한 문제: 빌드 에러 4종을 순서대로 겪음
+  - `RUN apt install && pip install` 실패 — `apt update` 선행 없음 + 설치할 패키지명 없음 + pip은 아직 설치 전이라 command not found
+  - `COPY requirements.txt .` 실패 — COPY는 빌드 컨텍스트 밖의 파일을 절대 못 봄 (컨텍스트가 `docker/`여서 루트의 requirements.txt 접근 불가)
+  - `pip install -r requirements.txt --index-url .../whl/cpu` 실패 — pytorch CPU 인덱스에는 torch 계열만 있어서 scikit-learn/jupyterlab을 못 찾음
+  - `CMD "echo start!"` — shell form에서 따옴표 포함 문자열이 통째로 하나의 명령어 이름으로 해석돼 not found
+- 해결하거나 확인한 내용:
+  - 빌드 컨텍스트를 리포 루트로 바꾸고 `-f docker/Dockerfile`로 Dockerfile 위치를 분리 지정. `.dockerignore`(.venv 991MB, data 63MB 등 제외)로 transferring context 약 1GB → 136B
+  - 컨테이너에는 torch/torchvision CPU wheel만 직접 설치 — 로컬 개발 의존성(jupyterlab 등)과 컨테이너 실행 의존성은 다르다. 이미지에는 실행에 필요한 최소만
+  - CMD는 exec form(JSON 배열)으로 — sh를 거치지 않고 python이 직접 PID 1이 됨 (D3에서 확인한 "컨테이너 PID 1 = 내 프로세스"와 연결)
+  - 실행 시 "NVIDIA Driver was not detected" 경고 = 이미지에는 CUDA **런타임**만 있고 **드라이버**는 호스트 것을 빌려 씀. `--gpus all` + NVIDIA Container Toolkit이 드라이버를 주입하는 구조 (Block 2 Day 1에서 검증 예정)
+  - 캐시 실측(D4 정밀도 ② 검증 완료): train_mnist.py에 주석 1줄 추가 후 재빌드 → apt/pip 레이어는 CACHED, COPY 레이어만 재실행. 이미지 해시가 aa98f3→b537d6으로 변경 = 레이어는 불변이고 바뀐 레이어를 얹은 새 이미지가 생성됨. 캐시는 바뀐 명령부터 아래로 전부 무효화 → 비싸고 안 바뀌는 명령은 위에, 자주 바뀌는 소스는 아래에
+  - MNIST 데이터와 models/mnist.pt가 컨테이너 안에 생성되고 `--rm` 종료와 함께 소멸 — D4에 정리한 "볼륨 분리가 필요한 이유"를 직접 확인
+- 다음에 할 것: `-v` 마운트로 data/models 호스트 분리 + named volume vs bind mount 비교(정밀도 ③), `docker diff`로 CoW 확인(정밀도 ①), Block 1 게이트 (b) `docs/notes/gpu-access-decision.md` 작성
