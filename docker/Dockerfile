@@ -2,14 +2,13 @@ FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
 
 WORKDIR /app
 
-# TODO: python3 + pip 설치 (베이스에 파이썬 없음 — apt 사용, D3에서 해본 것)
+# 베이스 이미지에 파이썬 없음 → apt로 설치. 목록 캐시 삭제로 레이어 경량화
 RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
 
-# 의도적으로 requirements를 소스보다 먼저 COPY → pip 레이어를 캐시에 태우기 위함
+# CPU wheel 인덱스 — CUDA wheel(~2.5GB) 대신 경량 빌드. GPU 전환은 Block 2에서
+# pip 설치를 소스 COPY보다 앞에 두어 소스 수정 시에도 이 레이어의 캐시 유지
 RUN pip3 install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
-# TODO: train_mnist.py COPY
 COPY python/W1/D5/train_mnist.py .
 
-# TODO: CMD 작성 (컨테이너 시작 시 학습 실행)
 CMD ["python3", "train_mnist.py", "--epochs", "1"]
