@@ -176,4 +176,16 @@ docker build --target tester -t myapp-test .
 - 나머지 약 2.1GB는 nvidia/cuda:12.4.1-runtime 베이스 이미지 몫. CPU 전용이면 python:3.11-slim 베이스로 1GB 아래도 가능하지만 Block 2 GPU 전환 계획이 있어 CUDA 베이스 유지
 - 동작 검증: 컨테이너 안에서 torch 2.12.1+cpu / torchvision 0.27.1+cpu import 정상 — venv COPY 방식 동작 확인
 
-다음에 할 것: `-v` 마운트로 data/models 호스트 분리 + `docker diff`로 CoW 확인 (D4 정밀도 ①③ 마감)
+3. `-v` 마운트 + `docker diff` CoW 대조 실측 (D4 정밀도 ①③ 마감)
+
+- `-v "$(pwd)/data:/app/data" -v "$(pwd)/models:/app/models"`로 실행 → 호스트 models/mnist.pt의 mtime이 컨테이너 로그의 저장 시각과 초 단위 일치 = 컨테이너가 마운트 통해 호스트에 직접 씀. `--rm` 뒤에도 산출물 생존 확인
+- 호스트 data/ 재사용으로 재다운로드 없음 — 다운로드 포함 13초, 캐시 상태면 3.5초
+- docker diff 대조 실험:
+  - 마운트 없음: /app/data 밑 MNIST 파일 8개 + /app/models/mnist.pt 전부 `A` = 쓰기 레이어(CoW)에 쌓임 → docker rm과 함께 소멸
+  - 마운트 있음: `A /app/data`, `A /app/models` 빈 마운트 지점 디렉터리만 남고 내용물 0줄 — 실제 쓰기는 CoW 레이어를 우회해 호스트 직행
+  - /tmp/perf-1.map, /tmp/torchinductor_root는 양쪽 모두 `A` — PyTorch 런타임 흔적. diff는 프로세스가 쓴 모든 파일을 잡음
+- diff 기호: A=추가, C=변경, D=삭제. 디렉터리는 자식 엔트리가 생기면 부모가 `C`로 표시됨
+- 학습 도중 ^C가 컨테이너 안 python까지 전달돼 KeyboardInterrupt로 종료 — exec form CMD라 python이 PID 1로 SIGINT를 직접 받은 것 (shell form이었으면 sh가 PID 1이라 전달 안 됨)
+- 로그의 loss는 에포크 평균이 아니라 마지막 배치 값이라 실행마다 다르다 (0.057 / 0.445 / 0.183)
+
+다음에 할 것: named volume 실습 비교(`docker volume create/inspect`, bind mount와 차이 실측 — 정밀도 ③ 나머지), Block 1 게이트 (b) `docs/notes/gpu-access-decision.md` 작성
