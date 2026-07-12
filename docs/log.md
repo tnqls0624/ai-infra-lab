@@ -81,7 +81,7 @@
 ## 2026-07-12 (일) — W2 D5
 
 오늘 한 것: 멀티스테이지로 이미지 슬림화, .dockerignore로 빌드 컨텍스트 정리, 시크릿 커밋 금지 규칙
-발생한 문제: 컨테이너가 실행될 때는 이미 Python 패키지 설치가 끝났기 때문에 는 필요하지 않아.
+발생한 문제: 컨테이너가 실행될 때는 이미 Python 패키지 설치가 끝났기 때문에 다음 도구는 필요하지 않아.
 
 - gcc
 - build-essential
@@ -166,3 +166,14 @@ docker build --target tester -t myapp-test .
 
 그렇지만 멀티스테이지를 사용하는것이 꼭 이미지의 크기를 줄이는것은 아님..
 최종 실행에 필요한 라이브러리가 큰 경우에는 줄일수가 없기때문에.
+
+2. 이미지 크기 전후 실측 (docker images / docker history)
+
+- 단일 스테이지 mnist-train:latest: 3.22GB
+- 멀티스테이지 mnist-train:multistage: 2.90GB → 약 320MB 감소 (−9.9%)
+- 줄어든 곳: apt 레이어 345MB → 32.3MB. runtime 스테이지에서 pip·venv와 그 의존성을 뺀 효과가 절감분의 거의 전부
+- 안 줄어든 곳: torch venv 레이어 779MB → 772MB로 사실상 동일. 실행에 필요한 라이브러리는 멀티스테이지로 못 줄인다는 걸 수치로 확인
+- 나머지 약 2.1GB는 nvidia/cuda:12.4.1-runtime 베이스 이미지 몫. CPU 전용이면 python:3.11-slim 베이스로 1GB 아래도 가능하지만 Block 2 GPU 전환 계획이 있어 CUDA 베이스 유지
+- 동작 검증: 컨테이너 안에서 torch 2.12.1+cpu / torchvision 0.27.1+cpu import 정상 — venv COPY 방식 동작 확인
+
+다음에 할 것: `-v` 마운트로 data/models 호스트 분리 + `docker diff`로 CoW 확인 (D4 정밀도 ①③ 마감)
