@@ -1,14 +1,52 @@
-FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
+# syntax=docker/dockerfile:1
+
+# =========================
+# 1. Dependency builder
+# =========================
+FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+        python3-venv \
+    && rm -rf /var/lib/apt/lists/*
+
+# 설치된 패키지를 한 번에 복사할 수 있도록 가상환경 사용
+RUN python3 -m venv /opt/venv
+
+ENV PATH="/opt/venv/bin:${PATH}"
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir \
+        torch==2.12.1 \
+        torchvision==0.27.1 \
+        --index-url https://download.pytorch.org/whl/cpu
+
+# =========================
+# 2. Runtime
+# =========================
+FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 AS runner
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 최종 이미지에는 pip, venv 설치 도구가 필요 없음
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        python3 \
+        ca-certificates \
+        libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/opt/venv/bin:${PATH}" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
-# 베이스 이미지에 파이썬 없음 → apt로 설치. 목록 캐시 삭제로 레이어 경량화
-RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /opt/venv /opt/venv
+COPY python/W1/D5/train_mnist.py ./train_mnist.py
 
-# CPU wheel 인덱스 — CUDA wheel(~2.5GB) 대신 경량 빌드. GPU 전환은 Block 2에서
-# pip 설치를 소스 COPY보다 앞에 두어 소스 수정 시에도 이 레이어의 캐시 유지
-RUN pip3 install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
-
-COPY python/W1/D5/train_mnist.py .
-
-CMD ["python3", "train_mnist.py", "--epochs", "1"]
+CMD ["python", "train_mnist.py", "--epochs", "1"]
