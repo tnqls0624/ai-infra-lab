@@ -81,7 +81,14 @@
 ## 2026-07-12 (일) — W2 D5
 
 오늘 한 것: 멀티스테이지로 이미지 슬림화, .dockerignore로 빌드 컨텍스트 정리, 시크릿 커밋 금지 규칙
-발생한 문제: 컨테이너가 실행될 때는 이미 Python 패키지 설치가 끝났기 때문에 다음 도구는 필요하지 않아.
+발생한 문제:
+
+- 멀티스테이지 첫 빌드는 통과했지만 실행하면 `import torch`가 `ModuleNotFoundError: No module named 'ctypes'`로 죽음 — venv를 COPY해도 따라오는 것은 site-packages(torch 등)뿐이고, ctypes 같은 표준 라이브러리는 시스템 파이썬 몫(`libpython3.10-stdlib`)이라 runner의 `python3-minimal`에는 없었음. runner를 full `python3`로 교체해 해결.
+- Dockerfile의 torch 핀을 고친 뒤 빌드·실행까지 했는데 이미지 안은 여전히 torch 2.5.1 — 파일 저장(13:01) 전에 빌드(12:58)를 돌려 옛 내용으로 빌드된 것(시각 대조로 발견). 이후 `docker run --rm <이미지> python -c "import torch; print(torch.__version__)"`로 이미지 내부를 직접 열어 2.12.1+cpu 확인 — "빌드했다"가 아니라 아티팩트 안을 확인하는 게 검증.
+
+(아래는 멀티스테이지 개념 정리)
+
+컨테이너가 실행될 때는 이미 Python 패키지 설치가 끝났기 때문에 다음 도구는 필요하지 않아.
 
 - gcc
 - build-essential
