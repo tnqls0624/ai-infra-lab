@@ -604,16 +604,16 @@ Docker/containerd 연동 실패, --gpus 옵션 누락 때문에 같은 경고가
 # 9. 공식 문서 대조 기록
 
 - NVIDIA Container Toolkit — Architecture Overview  
-  https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/arch-overview.html
+  <https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/arch-overview.html>
 
 - NVIDIA Container Toolkit — Installation Guide  
-  https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+  <https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html>
 
 - NVIDIA Container Toolkit — Running a Sample Workload  
-  https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/sample-workload.html
+  <https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/sample-workload.html>
 
 - NVIDIA CUDA Compatibility  
-  https://docs.nvidia.com/deploy/cuda-compatibility/index.html
+  <https://docs.nvidia.com/deploy/cuda-compatibility/index.html>
 
 ## 대조 후 틀렸던 부분 요약
 
